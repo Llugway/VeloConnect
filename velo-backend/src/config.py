@@ -1,3 +1,4 @@
+from datetime import timedelta
 import os
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -6,6 +7,10 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'veloconnect123'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = False          # True for SQL Debug
+
+    # JWT
+    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'jwt-cle-tres-securisee-change-moi'
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=24)
 
     @staticmethod
     def init_app(app):
