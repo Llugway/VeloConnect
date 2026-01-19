@@ -1,23 +1,35 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { CssBaseline } from '@mui/material';
-import Register from './pages/Register';
-import Login from './pages/Login';
-import Home from './pages/Home';
-import Profile from './pages/Profile';
+import { useContext } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import { AuthContext, AuthProvider } from './context/AuthContext'
+import LoginForm from './components/LoginForm'
+import RegisterForm from './components/RegisterForm'
+import Dashboard from './pages/Dashboard'
+import Home from './pages/Home'
 
-const App: React.FC = () => {
+
+function App() {
   return (
-    <Router>
-      <CssBaseline />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/profile" element={<Profile />} />
-      </Routes>
-    </Router>
-  );
-};
+    <AuthProvider>
+      <AppRoutes />
+    </AuthProvider>
+  )
+}
 
-export default App;
+function AppRoutes() {
+  const { isAuthenticated } = useContext(AuthContext)!
+
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<LoginForm />} />
+      <Route path="/register" element={<RegisterForm />} />
+      <Route
+        path="/dashboard"
+        element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />}
+      />
+      <Route path="*" element={<div>404 - Page non trouvée</div>} />
+    </Routes>
+  )
+}
+
+export default App
