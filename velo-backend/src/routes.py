@@ -15,7 +15,7 @@ def create_user():
     if not data or not data.get('email') or not data.get('password'):
         return jsonify({"error": "Email et password requis"}), 400
 
-    # Vérifie si l'email existe déjà (simple)
+    # Verify if email already exists
     existing = User.query.filter_by(email=data['email']).first()
     if existing:
         return jsonify({"error": "Email déjà utilisé"}), 409
@@ -30,5 +30,5 @@ def create_user():
 
     db.session.add(new_user)
     db.session.commit()
-    
+
     return jsonify({"message": "User créé", "id": new_user.id}), 201

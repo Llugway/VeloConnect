@@ -1,4 +1,3 @@
-# velo-backend/models.py
 from .app import db
 from flask_bcrypt import Bcrypt
 from datetime import datetime
