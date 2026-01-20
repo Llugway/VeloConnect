@@ -84,6 +84,25 @@ def login():
         }
     }), 200
 
+@api_bp.route('/pros', methods=['GET'])
+def get_pros():
+    ville = request.args.get('ville')
+    type_rep = request.args.get('type')
+
+    query = Pro.query
+    if ville:
+        query = query.join(User).filter(User.ville.ilike(f'%{ville}%'))
+    if type_rep:
+        query = query.filter(Pro.types_reparation.ilike(f'%{type_rep}%'))
+
+    pros = query.all()
+    return jsonify([{
+        "id": p.id,
+        "nom": p.nom,
+        "adresse": p.adresse,
+        "types_reparation": p.types_reparation.split(',') if p.types_reparation else []
+    } for p in pros]), 200
+
 @api_bp.route('/pros', methods=['POST'])
 @jwt_required()
 def create_pro():

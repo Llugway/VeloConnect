@@ -1,27 +1,62 @@
 import { useContext } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { AuthContext } from '../context/AuthContext'
-import { Box, Typography, Button } from '@mui/material'
+import { Box, Typography, Button, Card, CardContent } from '@mui/material'
+import { Link } from 'react-router-dom'
 
 const Dashboard = () => {
   const { user, logout } = useContext(AuthContext)!
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    logout()
+    navigate('/login')
+  }
 
   return (
-    <Box sx={{ p: 4 }}>
+    <Box sx={{ p: 4, maxWidth: 800, mx: 'auto' }}>
       <Typography variant="h4" gutterBottom>
         Tableau de bord
       </Typography>
 
       {user ? (
-        <>
-          <Typography variant="h6">
-            Bienvenue, {user.email} ({user.role})
-          </Typography>
-          <Button variant="outlined" color="error" onClick={logout} sx={{ mt: 3 }}>
-            Se déconnecter
-          </Button>
-        </>
+        <Card elevation={3}>
+          <CardContent>
+            <Typography variant="h6" gutterBottom>
+              Bienvenue, {user.email}
+            </Typography>
+            
+            <Typography color="text.secondary" gutterBottom>
+              Rôle : {user.role === 'pro' ? 'Professionnel' : 'Utilisateur'}
+            </Typography>
+            <Typography color="text.secondary" gutterBottom>
+              Ville : {user.ville || 'Non renseignée'}
+            </Typography>
+
+            {user.role === 'pro' && (
+              <Button
+                variant="contained"
+                color="primary"
+                component={Link}
+                to="/create-pro"
+                sx={{ mt: 3 }}
+              >
+                Créer / Modifier mon profil pro
+              </Button>
+            )}
+            
+            <Button
+              variant="contained"
+              color="error"
+              onClick={handleLogout}
+              sx={{ mt: 3 }}
+            >
+              Se déconnecter
+            </Button>
+          </CardContent>
+        </Card>
       ) : (
-        <Typography>Non connecté (devrait être protégé)</Typography>
+        <Typography>Erreur : utilisateur non chargé</Typography>
       )}
     </Box>
   )
