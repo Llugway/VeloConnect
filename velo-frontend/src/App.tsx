@@ -8,6 +8,8 @@ import Home from './pages/Home'
 import ListPros from './pages/ListPros'
 import Navbar from './components/Navbar'
 import CreatePro from './pages/CreatePro'
+import ProDetails from './pages/Prodetails'
+import AddDispo from './pages/AddDispo'
 
 
 function ProtectedRoute({ children }: { children: JSX.Element }) {
@@ -34,6 +36,7 @@ function AppRoutes() {
       <Route path="/login" element={<LoginForm />} />
       <Route path="/pros" element={<ListPros />} />
       <Route path="/register" element={<RegisterForm />} />
+      <Route path="/pros/:id" element={<ProDetails />} />
       <Route
         path="/dashboard"
         element={
@@ -48,6 +51,14 @@ function AppRoutes() {
           <ProtectedRoute>
             <CreatePro />
           </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/add-dispo"
+        element={
+        <ProtectedRoute>
+          <AddDispo />
+        </ProtectedRoute>
         }
       />
       <Route path="*" element={<Navigate to="/" replace />} />

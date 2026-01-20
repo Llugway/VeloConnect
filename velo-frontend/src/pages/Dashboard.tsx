@@ -34,6 +34,19 @@ const Dashboard = () => {
             </Typography>
 
             {user.role === 'pro' && (
+              <Box sx={{ mt: 3 }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  component={Link}
+                  to="/add-dispo"
+                >
+                  Ajouter une disponibilité
+                </Button>
+              </Box>
+            )}
+            
+            {user.role === 'pro' && (
               <Button
                 variant="contained"
                 color="primary"
@@ -44,7 +57,7 @@ const Dashboard = () => {
                 Créer / Modifier mon profil pro
               </Button>
             )}
-            
+
             <Button
               variant="contained"
               color="error"
