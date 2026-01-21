@@ -1,84 +1,134 @@
-from .app import create_app, db
-from .models import User, Pro, Dispo, RDV
-from flask_bcrypt import Bcrypt
 from datetime import date, timedelta
+from .model import User, Pro, Dispo, RDV
+from flask_bcrypt import Bcrypt
 
-app = create_app('development')
-bcrypt = Bcrypt(app)
+def seed(app,db):
 
-def seed_data():
+    bcrypt = Bcrypt(app)
     with app.app_context():
-        print("Suppression des données existantes...")
+        print("Suppression et recréation des tables...")
         db.drop_all()
         db.create_all()
 
-        # Création d'un user normal
-        user_normal = User(
-            email="user@test.com",
-            password=bcrypt.generate_password_hash("123456").decode('utf-8'),
-            role="user",
-            ville="Bordeaux"
-        )
-        db.session.add(user_normal)
-
-        # Création d'un pro
-        user_pro = User(
-            email="pro@test.com",
-            password=bcrypt.generate_password_hash("123456").decode('utf-8'),
-            role="pro",
-            ville="Bordeaux"
-        )
-        db.session.add(user_pro)
-        db.session.commit()  # On commit pour avoir les IDs
-
-        # Profil pro
-        pro = Pro(
-            user_id=user_pro.id,
-            nom="VéloPro Bordeaux",
-            adresse="12 rue Sainte-Catherine, 33000 Bordeaux",
-            types_reparation="Freins,Pneus,Changement de chaîne,Cadre"
-        )
-        db.session.add(pro)
+        # Utilisateurs
+        users = [
+            User(
+                email="alice.dupont@gmail.com",
+                password=bcrypt.generate_password_hash("alice123").decode('utf-8'),
+                role="user",
+                ville="Bordeaux"
+            ),
+            User(
+                email="thomas.martin@gmail.com",
+                password=bcrypt.generate_password_hash("thomas123").decode('utf-8'),
+                role="user",
+                ville="Pessac"
+            ),
+            User(
+                email="veloatelier.bdx@gmail.com",
+                password=bcrypt.generate_password_hash("pro123").decode('utf-8'),
+                role="pro",
+                ville="Bordeaux"
+            ),
+            User(
+                email="cyclesport.merignac@gmail.com",
+                password=bcrypt.generate_password_hash("pro123").decode('utf-8'),
+                role="pro",
+                ville="Mérignac"
+            ),
+            User(
+                email="reparvelo33@gmail.com",
+                password=bcrypt.generate_password_hash("pro123").decode('utf-8'),
+                role="pro",
+                ville="Talence"
+            )
+        ]
+        db.session.bulk_save_objects(users)
         db.session.commit()
 
-        # Ajout de 5 dispos sur les 5 prochains jours
-        today = date.today()
-        for i in range(5):
-            dispo = Dispo(
-                pro_id=pro.id,
-                date=today + timedelta(days=i),
-                heure="14:00",
-                disponible=True
-            )
-            db.session.add(dispo)
+        # Récupération des pros
+        pro1 = User.query.filter_by(email="veloatelier.bdx@gmail.com").first()
+        pro2 = User.query.filter_by(email="cyclesport.merignac@gmail.com").first()
+        pro3 = User.query.filter_by(email="reparvelo33@gmail.com").first()
 
-        # Un RDV déjà réservé (pour tester le statut réservé)
-        rdv_test = RDV(
-            user_id=user_normal.id,
-            pro_id=pro.id,
+        pros = [
+            Pro(
+                user_id=pro1.id,
+                nom="Vélo Atelier Bordeaux",
+                adresse="12 Rue Sainte-Catherine, 33000 Bordeaux",
+                types_reparation="freins,pneus,chaîne,cadre,électrique"
+            ),
+            Pro(
+                user_id=pro2.id,
+                nom="Cycle Sport Mérignac",
+                adresse="Avenue de l'Argonne, 33700 Mérignac",
+                types_reparation="vtt,route,gravel,course,cadre carbone"
+            ),
+            Pro(
+                user_id=pro3.id,
+                nom="Répar Vélo 33",
+                adresse="Rue des Faures, 33400 Talence",
+                types_reparation="freins,pneus,éclairage,voyage,urbain"
+            )
+        ]
+        db.session.bulk_save_objects(pros)
+        db.session.commit()
+
+        # Dispos réalistes (7 jours à venir, 3 créneaux par jour pour chaque pro)
+        today = date.today()
+        for pro in pros:
+            for day_offset in range(7):
+                for hour in ["09:00", "14:00", "17:30"]:
+                    dispo = Dispo(
+                        pro_id=pro.id,
+                        date=today + timedelta(days=day_offset),
+                        heure=hour,
+                        disponible=True
+                    )
+                    db.session.add(dispo)
+
+        db.session.commit()
+
+        # Quelques RDV pour Alice et Thomas
+        alice = User.query.filter_by(email="alice.dupont@gmail.com").first()
+        thomas = User.query.filter_by(email="thomas.martin@gmail.com").first()
+
+        rdv1 = RDV(
+            user_id=alice.id,
+            pro_id=pros[0].id,
             date=today + timedelta(days=2),
             heure="14:00",
+            status="pending"
+        )
+        rdv2 = RDV(
+            user_id=thomas.id,
+            pro_id=pros[1].id,
+            date=today + timedelta(days=3),
+            heure="17:30",
             status="confirmed"
         )
-        db.session.add(rdv_test)
 
-        # Marquer la dispo correspondante comme réservée
-        dispo_reserve = Dispo.query.filter_by(
-            pro_id=pro.id,
-            date=today + timedelta(days=2),
-            heure="14:00"
-        ).first()
-        if dispo_reserve:
-            dispo_reserve.disponible = False
+        db.session.add_all([rdv1, rdv2])
+
+        # Marquer les dispos correspondantes comme non-disponibles
+        for r in [rdv1, rdv2]:
+            dispo = Dispo.query.filter_by(
+                pro_id=r.pro_id,
+                date=r.date,
+                heure=r.heure
+            ).first()
+            if dispo:
+                dispo.disponible = False
 
         db.session.commit()
 
-        print("Données de test créées avec succès !")
-        print(f"User normal    : user@test.com / 123456")
-        print(f"User pro        : pro@test.com / 123456")
-        print(f"Pro créé        : VéloPro Bordeaux (ID: {pro.id})")
-        print(f"Dispos créées   : 5 créneaux (dont 1 réservé)")
-        print(f"RDV test créé   : ID {rdv_test.id}")
+        print("Base de données réaliste créée !")
+        print(f"Utilisateurs test :")
+        print("  • alice.dupont@gmail.com / alice123 (user)")
+        print("  • thomas.martin@gmail.com / thomas123 (user)")
+        print("Pros :")
+        print("  • veloatelier.bdx@gmail.com / pro123")
+        print("  • cyclesport.merignac@gmail.com / pro123")
+        print("  • reparvelo33@gmail.com / pro123")
+        print("RDV créés : 2 (un pending, un confirmed)")
 
-if __name__ == '__main__':
-    seed_data()

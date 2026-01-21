@@ -10,6 +10,8 @@ import Navbar from './components/Navbar'
 import CreatePro from './pages/CreatePro'
 import ProDetails from './pages/Prodetails'
 import AddDispo from './pages/AddDispo'
+import MesRDV from './pages/MesRDV'
+import Layout from './components/layout'
 
 
 function ProtectedRoute({ children }: { children: JSX.Element }) {
@@ -31,7 +33,8 @@ function AppRoutes() {
   const { isAuthenticated } = useContext(AuthContext)!
 
   return (
-   <Routes>
+   <Layout> 
+    <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<LoginForm />} />
       <Route path="/pros" element={<ListPros />} />
@@ -61,8 +64,17 @@ function AppRoutes() {
         </ProtectedRoute>
         }
       />
+      <Route
+        path="/mes-rdv"
+        element={
+          <ProtectedRoute>
+            <MesRDV />
+          </ProtectedRoute>
+        }
+      />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+  </Layout>
   )
 }
 

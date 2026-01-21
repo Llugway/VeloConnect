@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Box, Typography, Card, CardContent, CircularProgress, Alert, Chip, Divider, Button, Grid } from '@mui/material'
+import { Box, Typography, Card, CardContent, CircularProgress, Alert, Chip, Divider, Button, Grid, CardActions } from '@mui/material'
 import api from '../services/api'
+import toast from 'react-hot-toast'
 
 interface Pro {
   id: number
@@ -25,6 +26,8 @@ const ProDetails = () => {
   const [dispos, setDispos] = useState<Dispo[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+
+  const [bookingLoading, setBookingLoading] = useState<number | null>(null)
 
   useEffect(() => {
     const fetchProAndDispos = async () => {
@@ -58,6 +61,46 @@ const ProDetails = () => {
       </Box>
     )
   }
+
+  const handleBook = (dispoId: number) => {
+  toast((t) => (
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 300 }}>
+      <Typography variant="subtitle1">
+        Confirmer la réservation ?
+      </Typography>
+      <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+        <Button size="small" variant="outlined" onClick={() => toast.dismiss(t.id)}>
+          Annuler
+        </Button>
+        <Button 
+          size="small" 
+          variant="contained" 
+          color="primary"
+          onClick={() => {
+            toast.dismiss(t.id)
+            confirmBook(dispoId)
+          }}
+        >
+          Réserver
+        </Button>
+      </Box>
+    </Box>
+  ), { duration: Infinity })
+}
+
+const confirmBook = async (dispoId: number) => {
+  toast.promise(
+    api.post('/rdv', { dispo_id: dispoId }),
+    {
+      loading: 'Réservation en cours...',
+      success: (res) => {
+        window.location.reload()
+        return 'RDV réservé ! ' + res.data.message
+      },
+      error: (err) => err.response?.data?.error || 'Réservation échouée'
+    }
+  )
+}
 
   return (
     <Box sx={{ p: 4, maxWidth: 900, mx: 'auto' }}>
@@ -109,7 +152,21 @@ const ProDetails = () => {
                     size="small"
                     sx={{ mt: 1 }}
                   />
+                  
                 </CardContent>
+                {d.disponible && (
+                    <CardActions>
+                    <Button
+                      size="small"
+                      variant="contained"
+                      color="primary"
+                      disabled={bookingLoading === d.id}
+                      onClick={() => handleBook(d.id)}
+                    >
+                      Réserver ce créneau
+                    </Button>
+                    </CardActions>
+                  )}
               </Card>
             </Grid>
           ))}

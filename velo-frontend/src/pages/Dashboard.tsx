@@ -1,76 +1,61 @@
 import { useContext } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { AuthContext } from '../context/AuthContext'
-import { Box, Typography, Button, Card, CardContent } from '@mui/material'
 import { Link } from 'react-router-dom'
+import { AuthContext } from '../context/AuthContext'
+import { Box, Typography, Button, Card, CardContent, Divider } from '@mui/material'
 
 const Dashboard = () => {
   const { user, logout } = useContext(AuthContext)!
-  const navigate = useNavigate()
-
-  const handleLogout = () => {
-    logout()
-    navigate('/login')
-  }
 
   return (
-    <Box sx={{ p: 4, maxWidth: 800, mx: 'auto' }}>
-      <Typography variant="h4" gutterBottom>
-        Tableau de bord
+    <Box sx={{ p: { xs: 3, md: 6 }, maxWidth: 900, mx: 'auto' }}>
+      <Typography variant="h4" fontWeight={700} gutterBottom>
+        Bienvenue, {user?.email}
       </Typography>
 
-      {user ? (
-        <Card elevation={3}>
-          <CardContent>
-            <Typography variant="h6" gutterBottom>
-              Bienvenue, {user.email}
-            </Typography>
-            
-            <Typography color="text.secondary" gutterBottom>
-              Rôle : {user.role === 'pro' ? 'Professionnel' : 'Utilisateur'}
-            </Typography>
-            <Typography color="text.secondary" gutterBottom>
-              Ville : {user.ville || 'Non renseignée'}
-            </Typography>
+      <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+        {user?.role === 'pro' ? 'Espace professionnel' : 'Espace utilisateur'}
+      </Typography>
 
-            {user.role === 'pro' && (
-              <Box sx={{ mt: 3 }}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  component={Link}
-                  to="/add-dispo"
-                >
-                  Ajouter une disponibilité
-                </Button>
-              </Box>
-            )}
-            
-            {user.role === 'pro' && (
+      <Divider sx={{ my: 4 }} />
+
+      <Card elevation={0} sx={{ border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
+        <CardContent sx={{ p: 4 }}>
+          <Typography variant="h6" gutterBottom>
+            Vos informations
+          </Typography>
+          <Typography>Ville : {user?.ville || 'Non renseignée'}</Typography>
+
+          {user?.role === 'pro' && (
+            <Box sx={{ mt: 4 }}>
               <Button
                 variant="contained"
-                color="primary"
+                size="large"
                 component={Link}
-                to="/create-pro"
-                sx={{ mt: 3 }}
+                to="/add-dispo"
+                fullWidth
               >
-                Créer / Modifier mon profil pro
+                Ajouter une disponibilité
               </Button>
-            )}
+            </Box>
+          )}
 
-            <Button
-              variant="contained"
-              color="error"
-              onClick={handleLogout}
-              sx={{ mt: 3 }}
-            >
+          <Button
+            variant="outlined"
+            color="primary"
+            component={Link}
+            to="/mes-rdv"
+            sx={{ mt: 2 }}
+          >
+            Voir mes rendez-vous
+          </Button>
+
+          <Box sx={{ mt: 4 }}>
+            <Button variant="outlined" color="error" onClick={logout} fullWidth>
               Se déconnecter
             </Button>
-          </CardContent>
-        </Card>
-      ) : (
-        <Typography>Erreur : utilisateur non chargé</Typography>
-      )}
+          </Box>
+        </CardContent>
+      </Card>
     </Box>
   )
 }

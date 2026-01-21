@@ -264,3 +264,51 @@ def book_rdv():
         "pro_nom": pro.nom
     }), 201
 
+@api_bp.route('/mes-rdv', methods=['GET'])
+@jwt_required()
+def get_my_rdv():
+    """
+    Liste des RDV de l'utilisateur connecté.
+    """
+    current_user_id = int(get_jwt_identity())
+
+    rdvs = RDV.query.filter_by(user_id=current_user_id).all()
+
+    return jsonify([{
+        "id": r.id,
+        "pro_nom": Pro.query.get(r.pro_id).nom if Pro.query.get(r.pro_id) else "Pro inconnu",
+        "date": r.date.isoformat(),
+        "heure": r.heure,
+        "status": r.status,
+        "created_at": r.created_at.isoformat() if hasattr(r, 'created_at') else None
+    } for r in rdvs]), 200
+
+@api_bp.route('/rdv/<int:rdv_id>', methods=['DELETE'])
+@jwt_required()
+def cancel_rdv(rdv_id):
+    current_user_id = int(get_jwt_identity())
+
+    rdv = RDV.query.get(rdv_id)
+    if not rdv:
+        return jsonify({"error": "RDV non trouvé"}), 404
+
+    if rdv.user_id != current_user_id:
+        return jsonify({"error": "Ce RDV ne vous appartient pas"}), 403
+
+    if rdv.status == 'cancelled':
+        return jsonify({"error": "RDV déjà annulé"}), 400
+
+    # Rendre la dispo libre à nouveau
+    dispo = Dispo.query.filter_by(
+        pro_id=rdv.pro_id,
+        date=rdv.date,
+        heure=rdv.heure
+    ).first()
+    if dispo:
+        dispo.disponible = True
+
+    rdv.status = 'cancelled'
+
+    db.session.commit()
+
+    return jsonify({"message": "RDV annulé avec succès"}), 200

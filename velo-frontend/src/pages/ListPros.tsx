@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Box, Typography, Grid, Card, CardContent, CardActions, Button, CircularProgress, Alert } from '@mui/material'
+import { Box, Typography, Grid, Card, CardContent, CardActions, Button, CircularProgress, Alert, Chip } from '@mui/material'
 import api from '../services/api'
+
 
 interface Pro {
   id: number
@@ -48,44 +49,64 @@ const ListePros = () => {
   }
 
   return (
-    <Box sx={{ p: 4, maxWidth: 1200, mx: 'auto' }}>
-      <Typography variant="h4" gutterBottom>
-        Liste des professionnels
-      </Typography>
+      <Box sx={{ p: 4, maxWidth: 1200, mx: 'auto' }}>
+        <Typography variant="h4" gutterBottom>
+          Liste des professionnels
+        </Typography>
 
-      {pros.length === 0 ? (
-        <Typography>Aucun professionnel trouvé pour le moment.</Typography>
-      ) : (
-        <Grid container spacing={3}>
-          {pros.map((pro) => (
-            <Grid item xs={12} sm={6} md={4} key={pro.id}>
-              <Card
-                elevation={3}
-                sx={{ cursor: 'pointer', '&:hover': { boxShadow: 6 } }}
+        {pros.length === 0 ? (
+          <Typography>Aucun professionnel trouvé pour le moment.</Typography>
+        ) : (
+          <Grid container spacing={3}>
+            {pros.map((pro) => (
+              <Grid item xs={12} sm={6} md={4} key={pro.id}>
+                <Card
+                  elevation={3}
+                  sx={{
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  borderRadius: 3,
+                  overflow: 'hidden',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    transform: 'translateY(-8px)',
+                    boxShadow: '0 16px 40px rgba(0,0,0,0.12)',
+                  },
+                }}
                 onClick={() => navigate(`/pros/${pro.id}`)}
-              >
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
+                >
+                  <CardContent sx={{ flexGrow: 1, p: 3 }}>
+                  <Typography variant="h6" gutterBottom fontWeight={600}>
                     {pro.nom}
                   </Typography>
-                  <Typography color="text.secondary" gutterBottom>
+                  <Typography variant="body2" color="text.secondary" gutterBottom>
                     {pro.adresse}
                   </Typography>
-                  <Typography variant="body2">
-                    Réparations : {pro.types_reparation.join(', ') || 'Non précisé'}
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  <Button size="small" color="primary">
-                    Voir disponibilités
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      )}
-    </Box>
+                  <Box sx={{ mt: 2 }}>
+                    <Typography variant="subtitle2" gutterBottom>
+                      Réparations :
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {pro.types_reparation.map((type, idx) => (
+                        <Chip key={idx} label={type} size="small" variant="outlined" />
+                      ))}
+                    </Box>
+                  </Box>
+                  </CardContent>
+                  <CardActions sx={{ p: 3, pt: 0 }}>
+                    <Button size="small" color="primary">
+                      Voir disponibilités →
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        )}
+      </Box>
   )
 }
 

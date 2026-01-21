@@ -5,6 +5,7 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from .config import config
 
+
 db = SQLAlchemy()
 migrate = Migrate()
 jwt = JWTManager()
@@ -29,11 +30,10 @@ def create_app(config_name='default'):
      expose_headers=["Authorization"]
     )
 
-    # Import des models
     from .model import User, Pro, Dispo, RDV
-
-    # Import des routes/blueprints
+    
     from .routes import api_bp
+
 
     app.register_blueprint(api_bp, url_prefix='/api')
 
@@ -43,6 +43,7 @@ def create_app(config_name='default'):
         return dict(db=db, User=User, Pro=Pro, Dispo=Dispo, RDV=RDV)
 
     return app
+
 
 
 if __name__ == '__main__':
