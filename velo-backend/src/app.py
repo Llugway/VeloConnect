@@ -4,6 +4,9 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from .config import config
+import os
+instance_path = '/opt/render/project/src/instance'
+os.makedirs(instance_path, exist_ok=True)
 
 
 db = SQLAlchemy()
@@ -14,6 +17,7 @@ def create_app(config_name='default'):
     app = Flask(__name__)
 
     app.config.from_object(config[config_name])
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(instance_path, 'velo-prod.db')
     config[config_name].init_app(app)
 
     # Initialisation des extensions
