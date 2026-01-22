@@ -25,12 +25,12 @@ def create_app(config_name='default'):
     migrate.init_app(app, db)
     jwt.init_app(app)
 
-    CORS(app, resources={r"/api/*": {"origins": "https://velo-connect.vercel.app"}})
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    # CORS(app, resources={r"/api/*": {"origins": "https://velo-connect.vercel.app"}})
 
     from .model import User, Pro, Dispo, RDV
     
     from .routes import api_bp
-
 
     app.register_blueprint(api_bp, url_prefix='/api')
 
