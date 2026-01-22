@@ -18,6 +18,10 @@ def create_app(config_name='production'):
 
     CORS(app, origins="*")
 
+    @app.route('/api/test-cors')
+def test_cors():
+    return {"message": "CORS test OK"}
+
     app.config.from_object(config[config_name])
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(instance_path, 'velo-prod.db')
     config[config_name].init_app(app)
