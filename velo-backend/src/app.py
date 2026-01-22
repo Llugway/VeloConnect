@@ -23,7 +23,7 @@ def create_app(config_name='production'):
     CORS(app, resources={r"/api/*": {
         "origins": "*", 
         "supports_credentials": True,
-        "allow_headers": ["Content-Type", "Authorization"],
+        "allow_headers": ["Content-Type", "Authorization", "Access-Control-Allow-Origin"],
         "allow_methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
     }})
 
