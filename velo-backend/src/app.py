@@ -16,22 +16,19 @@ jwt = JWTManager()
 def create_app(config_name='production'):
     app = Flask(__name__)
 
+    CORS(app, origins="*", supports_credentials=True)
+
     app.config.from_object(config[config_name])
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(instance_path, 'velo-prod.db')
     config[config_name].init_app(app)
 
-    CORS(app, resources={r"/api/*": {
-        "origins": "*", 
-        "supports_credentials": True,
-        "allow_headers": ["Content-Type", "Authorization", "Access-Control-Allow-Origin"],
-        "allow_methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-    }})
-
-    @app.route('/api/register', methods=['OPTIONS'])
-    @app.route('/api/login', methods=['OPTIONS'])
-    @app.route('/api/pros', methods=['OPTIONS'])
-    def options():
-        return '', 204
+    @app.after_request
+    def after_request(response):
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+        response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS')
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
+        return response
 
     # CORS(app, resources={r"/api/*": {"origins": "https://velo-connect.vercel.app"}})
 
