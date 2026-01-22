@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import {
   Box,
   Typography,
-  Grid,
   Card,
   CardContent,
   CardActions,
@@ -67,74 +66,79 @@ const ListePros = () => {
         Trouvez le professionnel qui correspond à vos besoins – réparation, entretien, conseil.
       </Typography>
 
-      <Grid container spacing={4}>
-        {pros.length === 0 ? (
-          <Grid item xs={12}>
-            <Alert severity="info" sx={{ textAlign: 'center' }}>
-              Aucun professionnel disponible pour le moment. Revenez vite !
-            </Alert>
-          </Grid>
-        ) : (
-          pros.map((pro : Pro) => (
-            <Grid item xs={12} sm={6} md={4} key={pro.id} component="div">
-              <Card
-                elevation={0}
-                sx={{
-                  height: '100%',
-                  borderRadius: 4,
-                  overflow: 'hidden',
-                  border: '1px solid',
-                  borderColor: 'divider',
-                  transition: 'all 0.3s ease',
-                  '&:hover': {
-                    transform: 'translateY(-12px)',
-                    boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
-                  },
-                  cursor: 'pointer',
-                }}
-                onClick={() => navigate(`/pros/${pro.id}`)}
-              >
-                <Box sx={{ height: 220, overflow: 'hidden' }}>
-                  <img
-                    src={pro.image || 'https://images.pexels.com/photos/2598290/pexels-photo-2598290.jpeg'}
-                    alt={pro.nom}
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                      objectPosition: 'center',
-                    }}
-                  />
-                </Box>
-                <CardContent sx={{ p: 4 }}>
-                  <Typography variant="h6" gutterBottom fontWeight={600}>
-                    {pro.nom}
-                  </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                    <LocationOnIcon fontSize="small" sx={{ mr: 1, color: 'text.secondary' }} />
-                    <Typography variant="body2" color="text.secondary">
-                      {pro.adresse}
-                    </Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
-                    {pro.types_reparation?.map((type, idx) => (
-                      <Chip key={idx} label={type} size="small" variant="outlined" />
-                    ))}
-                  </Box>
-                </CardContent>
-                <CardActions sx={{ p: 4, pt: 0 }}>
-                  <Button
-                    fullWidth
-                    variant="outlined"
-                  >
-                    Voir disponibilités →
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
-          ))
-        )}
-      </Grid>
+      <Box
+    sx={{
+      display: 'grid',
+      gridTemplateColumns: {
+        xs: '1fr',           // 1 colonne mobile
+        sm: 'repeat(2, 1fr)', // 2 colonnes tablette
+        md: 'repeat(3, 1fr)', // 3 colonnes desktop
+      },
+      gap: 4,
+      mt: 6,
+    }}
+  >
+    {pros.length === 0 ? (
+      <Alert severity="info" sx={{ gridColumn: '1 / -1', textAlign: 'center' }}>
+        Aucun professionnel disponible pour le moment.
+      </Alert>
+    ) : (
+      pros.map((pro) => (
+        <Card
+          key={pro.id}
+          elevation={0}
+          sx={{
+            height: '100%',
+            borderRadius: 4,
+            overflow: 'hidden',
+            border: '1px solid',
+            borderColor: 'divider',
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              transform: 'translateY(-12px)',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
+            },
+            cursor: 'pointer',
+          }}
+          onClick={() => navigate(`/pros/${pro.id}`)}
+        >
+          <Box sx={{ height: 220, overflow: 'hidden' }}>
+            <img
+              src={pro.image || 'https://via.placeholder.com/800x220/0066cc/ffffff?text=Pro+Velo'}
+              alt={pro.nom}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                objectPosition: 'center',
+              }}
+            />
+          </Box>
+          <CardContent sx={{ p: 4 }}>
+            <Typography variant="h6" gutterBottom fontWeight={600}>
+              {pro.nom}
+            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <LocationOnIcon fontSize="small" sx={{ mr: 1, color: 'text.secondary' }} />
+              <Typography variant="body2" color="text.secondary">
+                {pro.adresse}
+              </Typography>
+            </Box>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
+              {pro.types_reparation?.map((type, idx) => (
+                <Chip key={idx} label={type} size="small" variant="outlined" />
+              ))}
+            </Box>
+          </CardContent>
+          <CardActions sx={{ p: 4, pt: 0 }}>
+            <Button fullWidth variant="outlined">
+              Voir disponibilités →
+            </Button>
+          </CardActions>
+        </Card>
+      ))
+    )}
+  </Box>
     </Container>
   )
 }

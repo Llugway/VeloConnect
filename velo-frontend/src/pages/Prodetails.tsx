@@ -132,42 +132,51 @@ const confirmBook = async (dispoId: number) => {
       {dispos.length === 0 ? (
         <Typography>Aucune disponibilité pour le moment.</Typography>
       ) : (
-        <Grid container spacing={2}>
-          {dispos.map((d) => (
-            <Grid item xs={12} sm={6} md={4} key={d.id} component="div">
-              <Card variant="outlined">
-                <CardContent>
-                  <Typography variant="subtitle1">
-                    {new Date(d.date).toLocaleDateString('fr-FR')}
-                  </Typography>
-                  <Typography variant="body1" color="primary">
-                    {d.heure}
-                  </Typography>
-                  <Chip
-                    label={d.disponible ? 'Disponible' : 'Réservé'}
-                    color={d.disponible ? 'success' : 'error'}
-                    size="small"
-                    sx={{ mt: 1 }}
-                  />
-                  
-                </CardContent>
-                {d.disponible && (
-                    <CardActions>
-                    <Button
-                      size="small"
-                      variant="contained"
-                      color="primary"
-                      disabled={bookingLoading === d.id}
-                      onClick={() => handleBook(d.id)}
-                    >
-                      Réserver ce créneau
-                    </Button>
-                    </CardActions>
-                  )}
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+        <Box
+  sx={{
+    display: 'grid',
+    gridTemplateColumns: {
+      xs: '1fr',
+      sm: 'repeat(2, 1fr)',
+      md: 'repeat(3, 1fr)',
+    },
+    gap: 3,
+    mt: 4,
+  }}
+>
+  {dispos.map((d) => (
+    <Card key={d.id} variant="outlined">
+      <CardContent>
+        <Typography variant="subtitle1">
+          {new Date(d.date).toLocaleDateString('fr-FR')}
+        </Typography>
+        <Typography variant="body1" color="primary">
+          {d.heure}
+        </Typography>
+        <Chip
+          label={d.disponible ? 'Disponible' : 'Réservé'}
+          color={d.disponible ? 'success' : 'error'}
+          size="small"
+          sx={{ mt: 1 }}
+        />
+      </CardContent>
+
+      {d.disponible && (
+        <CardActions>
+          <Button
+            size="small"
+            variant="contained"
+            color="primary"
+            onClick={() => handleBook(d.id)}
+            disabled={bookingLoading === d.id}
+          >
+            {bookingLoading === d.id ? 'Réservation...' : 'Réserver ce créneau'}
+          </Button>
+        </CardActions>
+        )}
+        </Card>
+      ))}
+    </Box>
       )}
 
       <Button variant="outlined" onClick={() => navigate('/pros')} sx={{ mt: 4 }}>
