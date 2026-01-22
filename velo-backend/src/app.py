@@ -13,7 +13,7 @@ db = SQLAlchemy()
 migrate = Migrate()
 jwt = JWTManager()
 
-def create_app(config_name='default'):
+def create_app(config_name='production'):
     app = Flask(__name__)
 
     app.config.from_object(config[config_name])
@@ -26,7 +26,13 @@ def create_app(config_name='default'):
         "allow_headers": ["Content-Type", "Authorization"],
         "allow_methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
     }})
-    
+
+    @app.route('/api/register', methods=['OPTIONS'])
+    @app.route('/api/login', methods=['OPTIONS'])
+    @app.route('/api/pros', methods=['OPTIONS'])
+    def options():
+        return '', 204
+
     # CORS(app, resources={r"/api/*": {"origins": "https://velo-connect.vercel.app"}})
 
     # Initialisation des extensions
