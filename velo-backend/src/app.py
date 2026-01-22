@@ -25,14 +25,7 @@ def create_app(config_name='default'):
     migrate.init_app(app, db)
     jwt.init_app(app)
 
-    CORS(app,
-     origins=["http://localhost:5173", "http://127.0.0.1:5173"],
-     allow_headers=["Content-Type", "Authorization", "Accept", "X-Requested-With"],
-     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-     supports_credentials=True,
-     max_age=86400,
-     expose_headers=["Authorization"]
-    )
+    CORS(app, resources={r"/api/*": {"origins": "https://veloconnect-frontend.vercel.app"}})
 
     from .model import User, Pro, Dispo, RDV
     
