@@ -16,7 +16,7 @@ jwt = JWTManager()
 def create_app(config_name='production'):
     app = Flask(__name__)
 
-    CORS(app, origins="*", supports_credentials=True)
+    CORS(app, origins="*")
 
     app.config.from_object(config[config_name])
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(instance_path, 'velo-prod.db')

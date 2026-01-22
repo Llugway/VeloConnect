@@ -89,7 +89,11 @@ def get_pros():
     ville = request.args.get('ville')
     type_rep = request.args.get('type')
 
+    limit = request.args.get('limit', type=int)
+
     query = Pro.query
+    if limit:
+        query = query.limit(limit)
     if ville:
         query = query.join(User).filter(User.ville.ilike(f'%{ville}%'))
     if type_rep:

@@ -11,7 +11,7 @@ const Home = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    api.get('/pros?limit=4')
+    api.get('/pros') // ?limit=4
       .then(res => setPros(res.data))
       .catch(err => console.error('Erreur chargement pros:', err))
   }, [])
