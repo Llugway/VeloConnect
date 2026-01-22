@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { JSX, useContext } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { AuthContext, AuthProvider } from './context/AuthContext'
 import LoginForm from './components/LoginForm'
@@ -31,8 +31,6 @@ function App() {
 }
 
 function AppRoutes() {
-  const { isAuthenticated } = useContext(AuthContext)!
-
   return (
    <Layout> 
     <Routes>

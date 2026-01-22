@@ -15,9 +15,11 @@ import {
 } from '@mui/material'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
 import api from '../services/api'
+import { Pro } from '../types/pro';
+
 
 const ListePros = () => {
-  const [pros, setPros] = useState([])
+  const [pros, setPros] = useState<Pro[]>([]);
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const navigate = useNavigate()
@@ -73,8 +75,8 @@ const ListePros = () => {
             </Alert>
           </Grid>
         ) : (
-          pros.map((pro) => (
-            <Grid item xs={12} sm={6} md={4} key={pro.id}>
+          pros.map((pro : Pro) => (
+            <Grid item xs={12} sm={6} md={4} key={pro.id} component="div">
               <Card
                 elevation={0}
                 sx={{

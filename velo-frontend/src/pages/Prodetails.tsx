@@ -1,15 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Box, Typography, Card, CardContent, CircularProgress, Alert, Chip, Divider, Button, Grid, CardActions } from '@mui/material'
+import { Box, Typography, Card, CardContent, CircularProgress, Alert, Chip, Button, Grid, CardActions } from '@mui/material'
 import api from '../services/api'
 import toast from 'react-hot-toast'
+import { Pro } from '../types/pro';
 
-interface Pro {
-  id: number
-  nom: string
-  adresse: string
-  types_reparation: string[]
-}
 
 interface Dispo {
   id: number
@@ -23,6 +18,8 @@ const ProDetails = () => {
   const navigate = useNavigate()
 
   const [pro, setPro] = useState<Pro | null>(null)
+
+  const [pros, setPros] = useState<Pro[]>([]);
   const [dispos, setDispos] = useState<Dispo[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -121,7 +118,7 @@ const confirmBook = async (dispoId: number) => {
             Types de réparation
           </Typography>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-            {pro.types_reparation.map((type, idx) => (
+            {pro.types_reparation.map((type : string, idx : number) => (
               <Chip key={idx} label={type} color="primary" variant="outlined" />
             ))}
           </Box>
@@ -137,7 +134,7 @@ const confirmBook = async (dispoId: number) => {
       ) : (
         <Grid container spacing={2}>
           {dispos.map((d) => (
-            <Grid item xs={12} sm={6} md={4} key={d.id}>
+            <Grid item xs={12} sm={6} md={4} key={d.id} component="div">
               <Card variant="outlined">
                 <CardContent>
                   <Typography variant="subtitle1">

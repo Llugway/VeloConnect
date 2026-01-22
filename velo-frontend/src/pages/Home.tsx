@@ -3,9 +3,10 @@ import { Box, Typography, Button, Grid, Card, CardContent, CardActions, Chip, Co
 import { Link as RouterLink } from 'react-router-dom'
 import LocationOnIcon from '@mui/icons-material/LocationOn'
 import api from '../services/api'
+import { Pro } from '../types/pro';
 
 const Home = () => {
-  const [pros, setPros] = useState([])
+  const [pros, setPros] = useState<Pro[]>([]);
 
   useEffect(() => {
     api.get('/pros?limit=4')
