@@ -20,7 +20,13 @@ def create_app(config_name='default'):
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(instance_path, 'velo-prod.db')
     config[config_name].init_app(app)
 
-    CORS(app, resources={r"/api/*": {"origins": "*", "supports_credentials": True}})
+    CORS(app, resources={r"/api/*": {
+        "origins": "*", 
+        "supports_credentials": True,
+        "allow_headers": ["Content-Type", "Authorization"],
+        "allow_methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    }})
+    
     # CORS(app, resources={r"/api/*": {"origins": "https://velo-connect.vercel.app"}})
 
     # Initialisation des extensions
