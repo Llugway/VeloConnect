@@ -11,7 +11,7 @@ import CreatePro from './pages/CreatePro'
 import ProDetails from './pages/Prodetails'
 import AddDispo from './pages/AddDispo'
 import MesRDV from './pages/MesRDV'
-import Layout from './components/layout'
+import Layout from './components/Layout'
 
 
 function ProtectedRoute({ children }: { children: JSX.Element }) {

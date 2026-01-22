@@ -1,112 +1,139 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Box, Typography, Grid, Card, CardContent, CardActions, Button, CircularProgress, Alert, Chip } from '@mui/material'
+import {
+  Box,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  CardActions,
+  Button,
+  Chip,
+  CircularProgress,
+  Alert,
+  Container,
+} from '@mui/material'
+import LocationOnIcon from '@mui/icons-material/LocationOn'
 import api from '../services/api'
 
-
-interface Pro {
-  id: number
-  nom: string
-  adresse: string
-  types_reparation: string[]
-}
-
 const ListePros = () => {
-  const [pros, setPros] = useState<Pro[]>([])
+  const [pros, setPros] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const navigate = useNavigate()
 
   useEffect(() => {
-    const fetchPros = async () => {
-      try {
-        const response = await api.get('/pros')
-        setPros(response.data)
-      } catch (err: any) {
-        setError('Impossible de charger les professionnels')
-        console.error(err)
-      } finally {
+    api.get('/pros')
+      .then(res => {
+        setPros(res.data)
         setLoading(false)
-      }
-    }
-    fetchPros()
+      })
+      .catch(err => {
+        setError('Impossible de charger les professionnels')
+        setLoading(false)
+      })
   }, [])
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 8 }}>
-        <CircularProgress />
-      </Box>
+      <Container maxWidth="lg" sx={{ py: 8, textAlign: 'center' }}>
+        <CircularProgress size={60} />
+        <Typography variant="h6" sx={{ mt: 4 }}>
+          Chargement des professionnels...
+        </Typography>
+      </Container>
     )
   }
 
   if (error) {
     return (
-      <Box sx={{ p: 4 }}>
-        <Alert severity="error">{error}</Alert>
-      </Box>
+      <Container maxWidth="lg" sx={{ py: 8 }}>
+        <Alert severity="error" sx={{ maxWidth: 600, mx: 'auto' }}>
+          {error}
+        </Alert>
+      </Container>
     )
   }
 
   return (
-      <Box sx={{ p: 4, maxWidth: 1200, mx: 'auto' }}>
-        <Typography variant="h4" gutterBottom>
-          Liste des professionnels
-        </Typography>
+    <Container maxWidth="lg" sx={{ py: 8 }}>
+      <Typography variant="h3" fontWeight={700} gutterBottom align="center">
+        Nos vélocistes à Bordeaux et alentours
+      </Typography>
 
+      <Typography variant="subtitle1" align="center" color="text.secondary" sx={{ mb: 6 }}>
+        Trouvez le professionnel qui correspond à vos besoins – réparation, entretien, conseil.
+      </Typography>
+
+      <Grid container spacing={4}>
         {pros.length === 0 ? (
-          <Typography>Aucun professionnel trouvé pour le moment.</Typography>
+          <Grid item xs={12}>
+            <Alert severity="info" sx={{ textAlign: 'center' }}>
+              Aucun professionnel disponible pour le moment. Revenez vite !
+            </Alert>
+          </Grid>
         ) : (
-          <Grid container spacing={3}>
-            {pros.map((pro) => (
-              <Grid item xs={12} sm={6} md={4} key={pro.id}>
-                <Card
-                  elevation={3}
-                  sx={{
+          pros.map((pro) => (
+            <Grid item xs={12} sm={6} md={4} key={pro.id}>
+              <Card
+                elevation={0}
+                sx={{
                   height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
+                  borderRadius: 4,
+                  overflow: 'hidden',
                   border: '1px solid',
                   borderColor: 'divider',
-                  borderRadius: 3,
-                  overflow: 'hidden',
                   transition: 'all 0.3s ease',
                   '&:hover': {
-                    transform: 'translateY(-8px)',
-                    boxShadow: '0 16px 40px rgba(0,0,0,0.12)',
+                    transform: 'translateY(-12px)',
+                    boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
                   },
+                  cursor: 'pointer',
                 }}
                 onClick={() => navigate(`/pros/${pro.id}`)}
-                >
-                  <CardContent sx={{ flexGrow: 1, p: 3 }}>
+              >
+                <Box sx={{ height: 220, overflow: 'hidden' }}>
+                  <img
+                    src={pro.image || 'https://images.pexels.com/photos/2598290/pexels-photo-2598290.jpeg'}
+                    alt={pro.nom}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      objectPosition: 'center',
+                    }}
+                  />
+                </Box>
+                <CardContent sx={{ p: 4 }}>
                   <Typography variant="h6" gutterBottom fontWeight={600}>
                     {pro.nom}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
-                    {pro.adresse}
-                  </Typography>
-                  <Box sx={{ mt: 2 }}>
-                    <Typography variant="subtitle2" gutterBottom>
-                      Réparations :
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                    <LocationOnIcon fontSize="small" sx={{ mr: 1, color: 'text.secondary' }} />
+                    <Typography variant="body2" color="text.secondary">
+                      {pro.adresse}
                     </Typography>
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                      {pro.types_reparation.map((type, idx) => (
-                        <Chip key={idx} label={type} size="small" variant="outlined" />
-                      ))}
-                    </Box>
                   </Box>
-                  </CardContent>
-                  <CardActions sx={{ p: 3, pt: 0 }}>
-                    <Button size="small" color="primary">
-                      Voir disponibilités →
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 2 }}>
+                    {pro.types_reparation?.map((type, idx) => (
+                      <Chip key={idx} label={type} size="small" variant="outlined" />
+                    ))}
+                  </Box>
+                </CardContent>
+                <CardActions sx={{ p: 4, pt: 0 }}>
+                  <Button
+                    fullWidth
+                    variant="outlined"
+                  >
+                    Voir disponibilités →
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
+          ))
         )}
-      </Box>
+      </Grid>
+    </Container>
   )
 }
 
