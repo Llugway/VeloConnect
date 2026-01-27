@@ -29,11 +29,10 @@ const ProDetails = () => {
   useEffect(() => {
     const fetchProAndDispos = async () => {
       try {
-        // Récupère les infos du pro
+
         const proRes = await api.get(`/pros/${id}`)
         setPro(proRes.data)
 
-        // Récupère ses dispos
         const disposRes = await api.get(`/pros/${id}/dispos`)
         setDispos(disposRes.data)
       } catch (err: any) {

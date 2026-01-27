@@ -23,7 +23,6 @@ def create_app(config_name='production'):
 
     # CORS(app, resources={r"/api/*": {"origins": "https://velo-connect.vercel.app"}})
 
-    # Initialisation des extensions
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app) 

@@ -10,7 +10,6 @@ def seed(app,db):
         db.drop_all()
         db.create_all()
 
-        # Utilisateurs
         users = [
             User(
                 email="alice.dupont@gmail.com",
@@ -46,7 +45,6 @@ def seed(app,db):
         db.session.bulk_save_objects(users)
         db.session.commit()
 
-        # Récupération des pros
         pro1 = User.query.filter_by(email="veloatelier.bdx@gmail.com").first()
         pro2 = User.query.filter_by(email="cyclesport.merignac@gmail.com").first()
         pro3 = User.query.filter_by(email="reparvelo33@gmail.com").first()
@@ -74,7 +72,6 @@ def seed(app,db):
         db.session.bulk_save_objects(pros)
         db.session.commit()
 
-        # Dispos réalistes (7 jours à venir, 3 créneaux par jour pour chaque pro)
         today = date.today()
         for pro in pros:
             for day_offset in range(7):
@@ -89,7 +86,6 @@ def seed(app,db):
 
         db.session.commit()
 
-        # Quelques RDV pour Alice et Thomas
         alice = User.query.filter_by(email="alice.dupont@gmail.com").first()
         thomas = User.query.filter_by(email="thomas.martin@gmail.com").first()
 
@@ -110,7 +106,6 @@ def seed(app,db):
 
         db.session.add_all([rdv1, rdv2])
 
-        # Marquer les dispos correspondantes comme non-disponibles
         for r in [rdv1, rdv2]:
             dispo = Dispo.query.filter_by(
                 pro_id=r.pro_id,

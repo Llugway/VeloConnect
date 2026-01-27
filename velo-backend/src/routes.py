@@ -302,7 +302,6 @@ def cancel_rdv(rdv_id):
     if rdv.status == 'cancelled':
         return jsonify({"error": "RDV déjà annulé"}), 400
 
-    # Rendre la dispo libre à nouveau
     dispo = Dispo.query.filter_by(
         pro_id=rdv.pro_id,
         date=rdv.date,

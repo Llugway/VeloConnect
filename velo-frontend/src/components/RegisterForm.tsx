@@ -17,7 +17,7 @@ const RegisterForm = () => {
 
     try {
       await api.post('/register', { email, password, ville, role })
-      navigate('/login')  // redirige vers login après inscription
+      navigate('/login')
     } catch (err: any) {
       setError(err.response?.data?.error || 'Inscription échouée')
     }

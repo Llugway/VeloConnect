@@ -30,13 +30,13 @@ class Pro(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     nom = db.Column(db.String(100), nullable=False)
     adresse = db.Column(db.String(200))
-    types_reparation = db.Column(db.String(200))  # ex: "freins,pneus,roues"
+    types_reparation = db.Column(db.String(200))
 
 class Dispo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     pro_id = db.Column(db.Integer, db.ForeignKey('pro.id'), nullable=False)
     date = db.Column(db.Date, nullable=False)
-    heure = db.Column(db.String(5), nullable=False)  # "09:00"
+    heure = db.Column(db.String(5), nullable=False)
     disponible = db.Column(db.Boolean, default=True)
 
 class RDV(db.Model):
@@ -45,4 +45,4 @@ class RDV(db.Model):
     pro_id = db.Column(db.Integer, db.ForeignKey('pro.id'), nullable=False)
     date = db.Column(db.Date, nullable=False)
     heure = db.Column(db.String(5), nullable=False)
-    status = db.Column(db.String(20), default='pending')  # pending, confirmed, cancelled
+    status = db.Column(db.String(20), default='pending')

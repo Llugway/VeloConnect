@@ -4,7 +4,6 @@
   flex-direction: column;
 }
 
-/* Centrage vertical + horizontal pour les pages principales */
 .center-page {
   flex: 1;
   display: flex;
@@ -13,7 +12,6 @@
   padding: 1rem;
 }
 
-/* Carte centrale pour les formulaires (login, register, etc.) */
 .form-card {
   width: 100%;
   max-width: 420px;
@@ -24,7 +22,6 @@
   text-align: center;
 }
 
-/* Boutons plus épais et modernes */
 button.MuiButton-root {
   text-transform: none;
   font-weight: 600;
@@ -32,7 +29,6 @@ button.MuiButton-root {
   border-radius: 12px;
 }
 
-/* Liens de navigation (ex: "Déjà inscrit ?") */
 .link-text {
   color: #1976d2;
   text-decoration: none;
@@ -43,7 +39,6 @@ button.MuiButton-root {
   text-decoration: underline;
 }
 
-/* Responsive pour petits écrans */
 @media (max-width: 600px) {
   .form-card {
     padding: 1.5rem;

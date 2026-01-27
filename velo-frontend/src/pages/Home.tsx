@@ -101,9 +101,9 @@ const Home = () => {
     sx={{
       display: 'grid',
       gridTemplateColumns: {
-        xs: '1fr',           // 1 colonne mobile
-        sm: 'repeat(2, 1fr)', // 2 tablettes
-        md: 'repeat(3, 1fr)', // 3 desktop
+        xs: '1fr',           // mobile
+        sm: 'repeat(2, 1fr)', // tablet
+        md: 'repeat(3, 1fr)', // desktop
       },
       gap: 4,
       mt: 6,
